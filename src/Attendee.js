@@ -32,7 +32,7 @@ class Attendee extends Component {
                 <div className="identity">{this.props.attendee.identity}</div>
                 {
                     this.state.tracks.map(track =>
-                        <Track key={track} filter={this.state.filter} track={track} />)
+                        <Track key={track} track={track} local={this.props.localParticipant} />)
                 }
             </div>
         );

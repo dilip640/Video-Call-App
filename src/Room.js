@@ -47,6 +47,24 @@ class Room extends Component {
     }
 
     render() {
+        /* var style = {
+             backgroundColor: "#F8F8F8",
+             //borderTop: "1px solid #E7E7E7",
+             textAlign: "center",
+             padding: "20px",
+             position: "fixed",
+             left: "0",
+             bottom: "0",
+             height: "50px",
+             width: "100%",
+         }
+ 
+         var phantom = {
+             display: 'block',
+             padding: '20px',
+             height: '50px',
+             width: '100%',
+         }*/
         return (
             //render Local participant first then map over remote participants
             <div className="room">
@@ -60,11 +78,17 @@ class Room extends Component {
                 </div>
                 <button id="disconnectCall" onClick={this.disconnectCall}>Leave Call</button>
             </div>
+
+
         );
     }
 
-
+    //<div style={phantom} />
+    //<div style={style}></div >
 
 }
 
 export default Room;
+/*<div classname="footer" align="center">
+                    <button id="disconnectCall" onClick={this.disconnectCall}>Leave Call</button>
+                </div>*/

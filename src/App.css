@@ -1,4 +1,6 @@
 .app {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   box-sizing: border-box;
   position: fixed;
@@ -7,7 +9,30 @@
   height: 100%;
   background-size: cover;
   background-image: url("./bb-background2.png");
+  overflow : auto;
 }
+
+.footer{
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgb(235, 195, 64);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/*.footer {
+  align : center;
+  margin-top: auto;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: red;
+  color: white;
+  text-align: center;
+}*/
 
 /*.row {
   display: flex;
@@ -77,6 +102,73 @@ video {
   -webkit-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
+
+dominantSpeaker:before {
+  z-index: 20;
+  border: 5px solid #ff7878;
+  content: "";
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.avreview {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20;
+  color: white;
+  opacity: .6;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.avreview:hover {
+  opacity: 1;
+}
+
+.fa-microphone-slash, .fa-video-slash {
+  color: red;
+}
+
+.video .avreview {
+  margin-top: 45px;
+}
+
+.symbol {
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+
+/*.avControl {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 20;
+  color: white;
+  opacity: .6;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.avControl:hover {
+  opacity: 1;
+}
+
+.fa-microphone-slash, .fa-video-slash {
+  color: red;
+}
+
+.video .avControl {
+  margin-top: 45px;
+}*/
+
 
 button {
   background-color: #fe019a;
