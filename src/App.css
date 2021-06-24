@@ -10,9 +10,10 @@
   background-size: cover;
   background-image: url("./bb-background2.png");
   overflow : auto;
+ 
 }
 
-.footer{
+/*.footer{
   margin-top: 1rem;
   padding: 1rem;
   background-color: rgb(235, 195, 64);
@@ -20,28 +21,30 @@
   bottom: 0;
   left: 0;
   width: 100%;
-}
+}*/
 
-/*.footer {
+footer {
+  padding-bottom: 8vh;
+  padding-top:0;
+  padding-left:90vh;
+  height:4%;
   align : center;
   margin-top: auto;
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: red;
+  background-color: white;
   color: white;
   text-align: center;
-}*/
-
-/*.row {
-  display: flex;
 }
 
-.column {
+
+/*.column {
   flex: 50%;
   margin: 7% 10% 10% 10%;
 }*/
+
 
 h4 {
   color: #808080;
@@ -52,7 +55,7 @@ h4 {
   }
 
 h1 {
-  color: #f5f5f5;
+  color: #2f4f4f;
   font-family: rockwell,arial,times new roman;
   margin-top: 0px;
   margin-bottom: 80px;
@@ -64,6 +67,8 @@ h1 {
   text-align: center;
   font-size: 1.25em;
 }
+
+
 
 .participants {
   display:flex;
@@ -103,7 +108,7 @@ video {
   transform: scale(-1, 1);
 }
 
-dominantSpeaker:before {
+.dominantSpeaker:before {
   z-index: 20;
   border: 5px solid #ff7878;
   content: "";
@@ -119,7 +124,7 @@ dominantSpeaker:before {
 
 .avreview {
   position: absolute;
-  top: 15px;
+  top: 10px;
   left: 15px;
   z-index: 20;
   color: white;
@@ -140,7 +145,7 @@ dominantSpeaker:before {
   margin-top: 45px;
 }
 
-.symbol {
+.icon {
   margin-bottom: 5px;
   cursor: pointer;
 }
@@ -171,7 +176,8 @@ dominantSpeaker:before {
 
 
 button {
-  background-color: #fe019a;
+ 
+  background-color: #008B8B;
   font-weight: bold;
   display: block;
   margin: 0 auto;

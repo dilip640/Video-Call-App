@@ -14,6 +14,7 @@ function AVControl(props) {
     }
 
     return (
+
         <div className="avreview">
             <FontAwesomeIcon icon={icon} onClick={() => props.changeRecord()} />
         </div>
