@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import AVreview from './AVreview';
-import ChatDisplay from './ChatDisplay';
+/*import AVreview from './AVreview';
+import ChatDisplay from './ChatDisplay';*/
 
 class Track extends Component {
     constructor(props) {
@@ -10,13 +10,6 @@ class Track extends Component {
         //access DOM element in order to attatch the track
         this.ref = React.createRef();
 
-        //state of microphone or video
-        this.state = {
-            recordOff: false,
-            //messages: []
-        }
-
-        this.changeRecord = this.changeRecord.bind(this);
     }
 
     componentDidMount() {
@@ -36,34 +29,13 @@ class Track extends Component {
         }
     }
 
-    changeRecord() {
-        if (this.state.recordOff) {
-            this.props.track.enable();
-        } else {
-            this.props.track.disable()
-        }
-
-        this.setState({
-            recordOff: !this.state.recordOff
-        });
-    }
-
     render() {
-        //const messages = this.props.local ? this.props.messages : this.state.messages;
         return (
             <div>
-                {
-                    this.props.track && this.props.track.kind === 'data'
-                        ? this.props.messages.map(message => <ChatDisplay message={message} />)
-                        : ''
-                }
+
                 <div className="track" ref={this.ref}>
 
-                    {
-                        this.props.local && this.props.track && this.props.track.kind !== 'data'
-                            ? <AVreview changeRecord={this.changeRecord} recordOff={this.state.recordOff} type={this.props.track.kind} />
-                            : ''
-                    }
+
 
                 </div>
             </div>
@@ -72,9 +44,3 @@ class Track extends Component {
 }
 
 export default Track;
-
-/*{
-                this.props.track && this.props.track.kind === 'data'
-                ? messages.map(filter => <Filter key={filter} name={filter} />)
-                : ''
-                 }*/

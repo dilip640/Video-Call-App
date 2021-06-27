@@ -11,7 +11,6 @@ class Attendee extends Component {
         const nonNullTracks = existingTracks.filter(track => track !== null)
         this.state = {
             tracks: nonNullTracks,
-            //messages: 'None'
         }
 
     }
@@ -31,14 +30,6 @@ class Attendee extends Component {
             tracks: [...this.state.tracks, track]
         });
     }
-
-    /*sendMessage(message) {
-        const dataTrack = this.state.tracks.find(track => track.kind == "data");
-        dataTrack.send(message);
-        this.setState({ messages: [...this.state.messages, message] });
-        console.log(message);
-
-    }*/
 
     render() {
         const isDominantSpeaker = this.props.dominantSpeaker === this.props.attendee.identity ? 'dominantSpeaker' : '';

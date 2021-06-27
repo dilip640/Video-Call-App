@@ -2,6 +2,10 @@ import './App.css';
 import React, { Component } from 'react';
 import Room from './Room';
 import ChatBox from './ChatBox'
+import Switch from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 const { connect, LocalDataTrack } = require('twilio-video'); //Importing twilio-javascript SDK and Data API
 
 
@@ -24,7 +28,7 @@ class App extends Component {
     async connectCall() {
         try {
             //fetching access token
-            const signal = await fetch(`https://token-service-1375-dev.twil.io/token?identity=${this.state.identity}`);
+            const signal = await fetch(`https://token-service-1636-dev.twil.io/token?identity=${this.state.identity}`);
             //const { data } = signal;
             //const token = data.token;
             const store = await signal.json();
@@ -38,25 +42,6 @@ class App extends Component {
 
             const dataTrack = new LocalDataTrack();
             await room.localParticipant.publishTrack(dataTrack);
-
-            /*const dataTrackPublished = {};
-
-dataTrackPublished.promise = new Promise((resolve, reject) => {
-  dataTrackPublished.resolve = resolve;
-  dataTrackPublished.reject = reject;
-});
-
-room.localParticipant.on('trackPublished', publication => {
-  if (publication.track === dataTrack) {
-    dataTrackPublished.resolve();
-  }
-});
-
-room.localParticipant.on('trackPublicationFailed', (error, track) => {
-  if (track === dataTrack) {
-    dataTrackPublished.reject(error);
-  }
-});*/
 
             this.setState({ room: room, token: token });
         } catch (err) {
@@ -74,6 +59,11 @@ room.localParticipant.on('trackPublicationFailed', (error, track) => {
     changeID(event) { //update identity when user has entered name
         this.setState({
             identity: event.target.value
+        });
+    }
+    audioState(event) { //update identity when user has entered name
+        this.setState({
+            room: { [event.target.name]: event.target.chacked }
         });
     }
 
@@ -94,19 +84,10 @@ room.localParticipant.on('trackPublicationFailed', (error, track) => {
                                 ref={this.nameField}
                                 onClick={this.eraseText} //remove placeholder text
                                 placeholder="Enter Name" />
-                            <button disabled={disabled} onClick={this.connectCall}>Join Now</button>
+                            <button className="standard-button" disabled={disabled} onClick={this.connectCall}>Join Now</button>
                         </div>
                         : //if room state not null
-                        //<Room backtoHome={this.backtoHome} room={this.state.room} />
-                        //<div className="row">
-                        ///<div className="column">
-                        // <div className="left">
                         <Room backtoHome={this.backtoHome} room={this.state.room} />
-                    // </div></div>
-                    // <div className="column">
-                    //<div className="right">
-                    // <ChatBox identity={this.state.identity} room={this.state.room} token={this.state.token} />
-                    // </div></div></div>
                 }
             </div>
         );
@@ -114,3 +95,24 @@ room.localParticipant.on('trackPublicationFailed', (error, track) => {
 }
 
 export default App;
+
+/*<FormControl component="fieldset">
+                                <FormGroup aria-label="position" row>
+                                    <FormControlLabel
+                                        value="top"
+                                        control={<Switch color="primary" checked={this.state.room.audio}
+                                            onChange={this.audioState}
+                                            name="audio" />}
+                                        label="Microphone"
+                                        labelPlacement="top"
+                                    />
+                                    <FormControlLabel
+                                        value="top"
+                                        control={<Switch color="primary" checked={this.state.room.video}
+                                            onChange={this.audioState}
+                                            name="video" />}
+                                        label="Video"
+                                        labelPlacement="top"
+                                    />
+                                </FormGroup>
+                            </FormControl>*/

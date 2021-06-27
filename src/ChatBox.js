@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
 import { ConsoleWriter } from 'istanbul-lib-report';
+import ChatDisplay from './ChatDisplay';
 
 
 class ChatBox extends Component {
@@ -38,6 +39,11 @@ class ChatBox extends Component {
     render() {
         return (
             <div className="chatbox">
+                <div>
+                    {
+                        this.props.messages.map(message => <ChatDisplay message={message} />)
+                    }
+                </div>
                 <CssBaseline />
                 <Grid item style={styles.gridItemMessage}>
                     <Grid
@@ -55,6 +61,7 @@ class ChatBox extends Component {
                                 rows={2}
                                 value={this.state.message}
                                 onChange={this.changeMessage}
+
                             />
                             <IconButton
                                 style={styles.sendButton}
@@ -62,12 +69,9 @@ class ChatBox extends Component {
                                 <Send style={styles.sendIcon} />
                             </IconButton>
                         </Grid>
-
                     </Grid>
                 </Grid>
-
             </div>
-
         );
     }
 }
