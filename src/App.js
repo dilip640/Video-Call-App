@@ -1,11 +1,6 @@
 import './App.css';
 import React, { Component } from 'react';
 import Room from './Room';
-import ChatBox from './ChatBox'
-import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
 const { connect, LocalDataTrack } = require('twilio-video'); //Importing twilio-javascript SDK and Data API
 
 
@@ -16,7 +11,6 @@ class App extends Component {
         this.state = {
             identity: '',
             room: null,
-            token: ""
         }
         this.nameField = React.createRef(); //creating Reference to itself
         this.connectCall = this.connectCall.bind(this);
@@ -29,8 +23,6 @@ class App extends Component {
         try {
             //fetching access token
             const signal = await fetch(`https://token-service-1636-dev.twil.io/token?identity=${this.state.identity}`);
-            //const { data } = signal;
-            //const token = data.token;
             const store = await signal.json();
             const token = store.accessToken;
             const room = await connect(store.accessToken, {
@@ -40,10 +32,11 @@ class App extends Component {
                 dominantSpeaker: true
             });
 
+            //publishing a data track for chats
             const dataTrack = new LocalDataTrack();
             await room.localParticipant.publishTrack(dataTrack);
 
-            this.setState({ room: room, token: token });
+            this.setState({ room: room });
         } catch (err) {
             console.log(err);
         }
@@ -96,23 +89,3 @@ class App extends Component {
 
 export default App;
 
-/*<FormControl component="fieldset">
-                                <FormGroup aria-label="position" row>
-                                    <FormControlLabel
-                                        value="top"
-                                        control={<Switch color="primary" checked={this.state.room.audio}
-                                            onChange={this.audioState}
-                                            name="audio" />}
-                                        label="Microphone"
-                                        labelPlacement="top"
-                                    />
-                                    <FormControlLabel
-                                        value="top"
-                                        control={<Switch color="primary" checked={this.state.room.video}
-                                            onChange={this.audioState}
-                                            name="video" />}
-                                        label="Video"
-                                        labelPlacement="top"
-                                    />
-                                </FormGroup>
-                            </FormControl>*/

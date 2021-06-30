@@ -10,7 +10,7 @@ class Attendee extends Component {
         const existingTracks = existingPublications.map(publication => publication.track);
         const nonNullTracks = existingTracks.filter(track => track !== null)
         this.state = {
-            tracks: nonNullTracks,
+            tracks: nonNullTracks, //audio, video and data tracks of all the attendees
         }
 
     }
@@ -40,15 +40,12 @@ class Attendee extends Component {
                 {
 
                     this.state.tracks.map(track =>
-                        <Track key={track} track={track} local={this.props.localParticipant} messages={this.props.messages} />)
+                        <Track key={track} track={track} local={this.props.localParticipant} pushMessage={this.props.pushMessage} id={this.props.id} />)
                 }
-
             </div>
-
 
         );
     }
-
 }
 
 export default Attendee;

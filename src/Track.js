@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-/*import AVreview from './AVreview';
-import ChatDisplay from './ChatDisplay';*/
 
 class Track extends Component {
     constructor(props) {
@@ -22,7 +20,7 @@ class Track extends Component {
 
             } else {
                 this.props.track.on('message', message => {
-                    this.props.messages.push(message);
+                    this.props.pushMessage(this.props.id, message);
                     console.log(message);
                 });
             }
@@ -34,8 +32,6 @@ class Track extends Component {
             <div>
 
                 <div className="track" ref={this.ref}>
-
-
 
                 </div>
             </div>

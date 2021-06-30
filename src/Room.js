@@ -6,8 +6,6 @@ import VideoControl from './VideoControl';
 import { Paper, Grid } from "@material-ui/core";
 import ChatBox from './ChatBox';
 import CallEndIcon from '@material-ui/icons/CallEnd';
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import List from '@material-ui/core/List';
@@ -19,32 +17,43 @@ import ChatIcon from '@material-ui/icons/Chat';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
+import PeopleIcon from '@material-ui/icons/People';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 class Room extends Component {
 
     constructor(props) {
         super(props);
 
-        this.handleDrawer = this.handleDrawer.bind(this);
-        this.handleDrawerClose = this.handleDrawerClose.bind(this);
-
         const existingPublications = Array.from(this.props.room.localParticipant.tracks.values());
         const existingTracks = existingPublications.map(publication => publication.track);
         const nonNullTracks = existingTracks.filter(track => track !== null)
         this.state = {
-            //initialise room with attendees list array
-            attendeesList: Array.from(this.props.room.participants.values()),
-            tracks: nonNullTracks,
-            messages: [],
-            audioOff: false,
-            videoOff: false,
-            setOpen: false
+            attendeesList: Array.from(this.props.room.participants.values()), //Array of participants in room
+            tracks: nonNullTracks,                                            //Track of local participant
+            chat: [{                                                           //For chatbox
+                id: '',
+                message: ''
+            }],
+            audioOff: false,                                                  //Audio track's state of local participant
+            videoOff: false,                                                  //Video track'state of local participant
+            setChatOpen: false,
+            setAttendeesOpen: false
         }
-        this.disconnectCall = this.disconnectCall.bind(this); //binding this to disconnectCall()
+        this.disconnectCall = this.disconnectCall.bind(this);                 //binding this to disconnectCall()
         this.sendMessage = this.sendMessage.bind(this);
         this.changeAudio = this.changeAudio.bind(this);
         this.changeVideo = this.changeVideo.bind(this);
+        this.pushMessage = this.pushMessage.bind(this);
+        this.handleChatDrawer = this.handleChatDrawer.bind(this);
+        this.handleAttendeesDialog = this.handleAttendeesDialog.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
@@ -56,11 +65,16 @@ class Room extends Component {
     }
 
     sendMessage(message) {
+        //Sending the message in chat box
         const dataTrack = this.state.tracks.find(track => track.kind == "data");
         dataTrack.send(message);
-        this.setState({ messages: [...this.state.messages, message] });
+        this.pushMessage(this.props.room.localParticipant.identity, message);
         console.log(message);
+    }
 
+    pushMessage(id, message) {
+        //Update chat 
+        this.setState({ chat: [...this.state.chat, { id: id, message: message }] });
     }
 
     componentWillUnmount() {
@@ -90,12 +104,14 @@ class Room extends Component {
     }
 
     CurrentSpeaker(attendee) {
+        //Update dominant speaker
         this.setState({
             dominantSpeaker: attendee ? attendee.identity : null
         });
     }
 
     changeAudio(track) {
+        //Reviewing state of audio track of local Participant
         if (this.state.audioOff) {
             track.enable();
         } else {
@@ -108,6 +124,7 @@ class Room extends Component {
     }
 
     changeVideo(track) {
+        //Reviewing state of video track of local participant
         if (this.state.videoOff) {
             track.enable();
         } else {
@@ -119,17 +136,22 @@ class Room extends Component {
         });
     }
 
-
-    handleDrawerClose() {
+    handleChatDrawer() {
         this.setState({
-            setOpen: false
+            setChatOpen: !this.state.setChatOpen
         });
     }
 
-    handleDrawer() {
+    handleAttendeesDialog() {
         this.setState({
-            setOpen: !this.state.setOpen
-        });
+            setAttendeesOpen: true
+        })
+    }
+
+    handleClose() {
+        this.setState({
+            setAttendeesOpen: false
+        })
     }
 
     render() {
@@ -146,6 +168,8 @@ class Room extends Component {
                 background: '#2E3B55',
             },
             paperLeft: {
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
                 flex: 4,
                 height: '100%',
                 margin: 10,
@@ -164,11 +188,8 @@ class Room extends Component {
             drawer: {
                 width: 340,
                 flexShrink: 0,
-                paddingTop: '20%',
-                //zIndex: -1200,
             },
             drawerPaper: {
-                paddingTop: '20%',
                 width: 340,
             },
             title: {
@@ -179,10 +200,18 @@ class Room extends Component {
 
             },
             shiftTextLeft: {
-                marginRight: 340
+                marginRight: 340,
+                display: 'flex',
+                flexDirection: 'row wrap',
+                padding: 20,
+                width: '100%'
             },
             shiftTextRight: {
-                marginLeft: 0,
+                marginRight: 0,
+                display: 'flex',
+                flexDirection: 'row wrap',
+                padding: 20,
+                width: '100%'
             },
             drawerHeader: {
                 display: 'flex',
@@ -196,138 +225,177 @@ class Room extends Component {
             },
             drawerContainer: {
                 overflow: 'auto',
-                paddingTop: 60
+                paddingTop: 60,
+                width: 340,
             },
         };
+
         return (
 
-            //render Local participant first then map over remote participants
             <div className="room">
                 <CssBaseline />
+
                 <Grid id="appbar" style={styles.root}>
-                    <AppBar position="relative" style={{ zIndex: 1401, background: '#2E3B55' }}>
+                    <AppBar position="fixed" style={{ zIndex: 1401, background: '#2E3B55' }}>
                         <Toolbar variant="dense">
+
                             <Typography variant="h6" style={styles.title}>
                                 MS Teams
                             </Typography>
-                            <div style={styles.toolbarButtons}>
-                                <Tooltip title="Microphone" arrow><IconButton color="inherit">
-                                    {
-                                        this.state.tracks.map(track =>
-                                            track && track.kind == 'audio'
-                                                ? <AudioControl key={this.props.room.localParticipant.identity} changeAudio={this.changeAudio} audioOff={this.state.audioOff} track={track} />
-                                                : '')
-                                    }</IconButton></Tooltip>
-                                <Tooltip title="Video" arrow><IconButton color="inherit">
-                                    {
-                                        this.state.tracks.map(track =>
-                                            track && track.kind == 'video'
-                                                ? <VideoControl key={this.props.room.localParticipant.identity} changeVideo={this.changeVideo} videoOff={this.state.videoOff} track={track} />
-                                                : '')
-                                    }</IconButton></Tooltip>
-                                <Tooltip title="Leave Call" arrow><IconButton color="secondary" variant="fab" onClick={this.disconnectCall}><CallEndIcon fontSize="large" /></IconButton></Tooltip>
-                                <Tooltip title="Chat" arrow><IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    edge="end"
-                                    onClick={this.handleDrawer}
 
-                                >
-                                    <ChatIcon />
-                                </IconButton></Tooltip>
+                            <div style={styles.toolbarButtons}>
+
+                                <Tooltip title="Microphone" arrow>
+                                    <IconButton color="inherit">
+                                        {
+                                            this.state.tracks.map(track =>
+                                                track && track.kind == 'audio'
+                                                    ? <AudioControl key={this.props.room.localParticipant.identity}
+                                                        changeAudio={this.changeAudio}
+                                                        audioOff={this.state.audioOff}
+                                                        track={track} />
+                                                    : '')
+                                        }
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Video" arrow>
+                                    <IconButton color="inherit">
+                                        {
+                                            this.state.tracks.map(track =>
+                                                track && track.kind == 'video'
+                                                    ? <VideoControl key={this.props.room.localParticipant.identity}
+                                                        changeVideo={this.changeVideo}
+                                                        videoOff={this.state.videoOff}
+                                                        track={track} />
+                                                    : '')
+                                        }
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Leave Call" arrow>
+                                    <IconButton color="secondary" variant="fab" onClick={this.disconnectCall}>
+                                        <CallEndIcon fontSize="large" />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Participants" arrow>
+                                    <IconButton
+                                        color="inherit"
+                                        onClick={this.handleAttendeesDialog}>
+                                        <PeopleIcon fontSize="large" />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Chat" arrow>
+                                    <IconButton
+                                        color="inherit"
+                                        aria-label="open drawer"
+                                        edge="end"
+                                        fontSize="large"
+                                        onClick={this.handleChatDrawer}>
+                                        <ChatIcon />
+                                    </IconButton>
+                                </Tooltip>
+
                             </div>
                         </Toolbar>
-                    </AppBar></Grid>
+                    </AppBar>
+                </Grid>
+
+                <Toolbar />
 
                 <Grid
                     id="main"
                     container
                     justify="center"
                     alignItems="center"
-                    style={{ height: "inherit" }}
-                >
+                    style={{ height: "inherit" }}>
+
                     <main key={this.props.room.localParticipant.identity}
-                        style={this.state.setOpen ? styles.shiftTextLeft : styles.shiftTextRight}
-                    >
+                        style={this.state.setChatOpen ? styles.shiftTextLeft : styles.shiftTextRight}>
+
                         <div style={styles.div}>
                             <Paper style={styles.paperLeft}>
                                 <div className="participants">
-                                    <Attendee key={this.props.room.localParticipant.identity} dominantSpeaker={this.state.dominantSpeaker} localParticipant="true" attendee={this.props.room.localParticipant} messages={this.state.messages} />
+                                    <Attendee key={this.props.room.localParticipant.identity}
+                                        dominantSpeaker={this.state.dominantSpeaker}
+                                        localParticipant="true" attendee={this.props.room.localParticipant}
+                                        pushMessage={this.pushMessage}
+                                        id={this.props.room.localParticipant.identity} />
                                     {
                                         this.state.attendeesList.map(attendee =>
-                                            <Attendee key={attendee.identity} dominantSpeaker={this.state.dominantSpeaker} attendee={attendee} messages={this.state.messages} />
+                                            <Attendee key={attendee.identity}
+                                                dominantSpeaker={this.state.dominantSpeaker}
+                                                attendee={attendee}
+                                                pushMessage={this.pushMessage}
+                                                id={attendee.identity} />
                                         )
                                     }
                                 </div>
                             </Paper>
                         </div>
+                    </main>
+                </Grid>
 
-                    </main></Grid>
+                <div>
+                    <Dialog
+                        open={this.state.setAttendeesOpen}
+                        onClose={this.handleClose}
+                        scroll='paper'
+                        aria-labelledby="scroll-dialog-title"
+                        aria-describedby="scroll-dialog-description"
+                    >
+                        <DialogTitle id="scroll-dialog-title">Others in Call</DialogTitle>
+                        <DialogContent dividers='true'>
+                            <DialogContentText
+                                id="scroll-dialog-description"
+                                tabIndex={-1}>
+
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleClose} color="primary">
+                                Cancel
+                            </Button>
+                        </DialogActions>
+
+                    </Dialog>
+                </div>
 
                 <Drawer
                     style={styles.drawer}
                     variant="persistent"
                     anchor="right"
-                    open={this.state.setOpen}
+                    open={this.state.setChatOpen}>
 
-                >
                     <div style={styles.drawerContainer}>
                         <div style={styles.drawerHeader}>
-                            <IconButton onClick={this.handleDrawerClose} fontSize="large">
+                            <IconButton onClick={this.handleChatDrawer} fontSize="large">
                                 <ChevronRightIcon />
                             </IconButton>
                         </div>
-                        <Divider />
-                        <List>
 
+                        <Divider />
+
+                        <List>
                             {
 
                                 this.props.room.localParticipant
-                                    ? <ChatBox sendMessage={this.sendMessage} id={this.props.room.localParticipant} messages={this.state.messages} />
+                                    ? <ChatBox sendMessage={this.sendMessage}
+                                        chat={this.state.chat}
+                                        local={this.props.room.localParticipant.identity} />
                                     : ''
 
                             }
                         </List>
                     </div>
-
                 </Drawer >
 
-
-
             </div >
-
-
-
         );
-
     }
 }
 
 export default Room;
-
-/*  <Drawer
-                    style={styles.drawer}
-                    variant="persistent"
-                    anchor="right"
-                    open={this.state.setOpen}
-
-                >
-                    <div style={styles.drawerHeader}>
-                        <IconButton onClick={this.handleDrawerClose} fontSize="large">
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    </div>
-                    <Divider />
-                    <List>
-
-                        {
-                            this.state.attendeesList.map(attendee =>
-                                <List>{attendee.identity}</List>)
-
-                        }
-                    </List>
-                    <Divider />
-
-                </Drawer>*/
-
 
