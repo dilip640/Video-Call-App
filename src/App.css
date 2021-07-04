@@ -13,6 +13,7 @@
  
 }
 
+
 h4 {
   color: #808080;
   font-family: rockwell,arial,times new roman;
@@ -98,6 +99,11 @@ video {
   font-size: 3rem;
 }
 
+.spacer{
+  margin-bottom: 110;
+  visibility: hidden; 
+}
+
 .audiocontrol .videocontrol:hover {
   opacity: 1;
 }
@@ -145,6 +151,7 @@ input {
   font-size: 1em;
   text-align: center;
   border-radius: 0;
+  margin:20px;
 }
 
 @media (max-width: 1048px) {

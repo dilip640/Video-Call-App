@@ -9,13 +9,16 @@ class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            identity: '',
+            identity: this.props.identity,
             room: null,
+            roomName: ''
         }
+        console.log(this.state.identity);
         this.nameField = React.createRef(); //creating Reference to itself
         this.connectCall = this.connectCall.bind(this);
         this.backtoHome = this.backtoHome.bind(this);
         this.changeID = this.changeID.bind(this);
+        this.changeRoomID = this.changeRoomID.bind(this);
         this.eraseText = this.eraseText.bind(this);
     }
 
@@ -26,7 +29,7 @@ class App extends Component {
             const store = await signal.json();
             const token = store.accessToken;
             const room = await connect(store.accessToken, {
-                name: 'cool-room',
+                name: this.state.roomName,
                 audio: true,
                 video: true,
                 dominantSpeaker: true
@@ -46,22 +49,24 @@ class App extends Component {
         this.setState({ room: null });
     }
 
-    eraseText() { //earse the placeholder text of name field when user enters
+    eraseText() { //erase the placeholder text of name field when user enters
         this.nameField.current.placeholder = ''; //access DOM element created by current component
     }
+
     changeID(event) { //update identity when user has entered name
         this.setState({
             identity: event.target.value
         });
     }
-    audioState(event) { //update identity when user has entered name
+
+    changeRoomID(event) { //update identity when user has entered name
         this.setState({
-            room: { [event.target.name]: event.target.chacked }
+            roomName: event.target.value
         });
     }
 
     render() {
-        const disabled = this.state.identity === '' ? true : false; //state of join button (disabled/enabled)
+        const disabled = ((this.state.identity === '') && (this.state.roomName === '')) ? true : false; //state of join button (disabled/enabled)
         return (
             <div className="app">
                 {
@@ -71,13 +76,15 @@ class App extends Component {
                         <div className="home">
                             <h4 className="mt-3">Fill the details for</h4>
                             <h1 className="mt-2">Meeting Now!</h1>
+
                             <input
-                                value={this.state.identity} //binding the reference
-                                onChange={this.changeID} //update identity
-                                ref={this.nameField}
-                                onClick={this.eraseText} //remove placeholder text
-                                placeholder="Enter Name" />
+                                value={this.state.roomName} //binding the reference
+                                onChange={this.changeRoomID} //update identity
+                                //onClick={this.eraseText} //remove placeholder text
+                                placeholder="Enter Room Name" />
                             <button className="standard-button" disabled={disabled} onClick={this.connectCall}>Join Now</button>
+                            <br />
+                            <button className="standard-button" onClick={e => this.props.logout(e)}>Logout</button>
                         </div>
                         : //if room state not null
                         <Room backtoHome={this.backtoHome} room={this.state.room} />
@@ -89,3 +96,9 @@ class App extends Component {
 
 export default App;
 
+/*<input
+                                value={this.state.identity} //binding the reference
+                                onChange={this.changeID} //update identity
+                                ref={this.nameField}
+                                onClick={this.eraseText} //remove placeholder text
+                                placeholder="Enter Name" />*/

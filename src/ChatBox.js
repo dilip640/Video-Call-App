@@ -42,6 +42,7 @@ class ChatBox extends Component {
                     }
                 </div>
                 <CssBaseline />
+                <div class="spacer"> . </div>
                 <Grid item style={styles.gridItemMessage}>
                     <Grid
                         container
@@ -57,12 +58,10 @@ class ChatBox extends Component {
                                 multiline
                                 rows={2}
                                 value={this.state.message}
-                                onChange={this.changeMessage}
-
-                            />
+                                onChange={this.changeMessage} />
                             <IconButton
                                 style={styles.sendButton}
-                                onClick={() => { this.props.sendMessage(this.state.message) }}>
+                                onClick={() => { this.props.sendMessage(this.state.message); this.setState({ message: "" }) }}>
                                 <Send style={styles.sendIcon} />
                             </IconButton>
                         </Grid>
@@ -75,10 +74,10 @@ class ChatBox extends Component {
 
 const styles = {
     textField: { width: "100%", borderWidth: 0, borderColor: "transparent" },
-    textFieldContainer: { flex: 1, marginRight: 12 },
+    textFieldContainer: { flex: 1, /*marginRight: 12*/ },
     gridItem: { paddingTop: 12, paddingBottom: 12 },
     gridItemChatList: { overflow: "auto", height: "70vh" },
-    gridItemMessage: { marginTop: 12, marginBottom: 12, position: "fixed", bottom: 0, width: "100%", zIndex: 60 },
+    gridItemMessage: { height: 110, marginTop: 12, marginBottom: 12, position: "fixed", bottom: 0, width: "100%", zIndex: 60, backgroundColor: "white" },
     sendButton: { backgroundColor: "#3f51b5" },
     sendIcon: { color: "white" },
     mainGrid: { paddingTop: 100, borderWidth: 1 },

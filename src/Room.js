@@ -25,6 +25,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Avatar from '@material-ui/core/Avatar';
 
 class Room extends Component {
 
@@ -351,7 +352,17 @@ class Room extends Component {
                             <DialogContentText
                                 id="scroll-dialog-description"
                                 tabIndex={-1}>
-
+                                {
+                                    this.state.attendeesList.map(attendee =>
+                                        <div>
+                                            <List>
+                                                <Avatar>{attendee.identity.charAt(0)}</Avatar>
+                                                {attendee.identity}
+                                            </List>
+                                            <Divider />
+                                        </div>
+                                    )
+                                }
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -368,7 +379,6 @@ class Room extends Component {
                     variant="persistent"
                     anchor="right"
                     open={this.state.setChatOpen}>
-
                     <div style={styles.drawerContainer}>
                         <div style={styles.drawerHeader}>
                             <IconButton onClick={this.handleChatDrawer} fontSize="large">
