@@ -10,7 +10,7 @@ class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            //identity: this.props.identity,
+            isLoading: false,
             room: null,
             roomName: ''
         }
@@ -18,18 +18,21 @@ class App extends Component {
         this.nameField = React.createRef(); //creating Reference to itself
         this.connectCall = this.connectCall.bind(this);
         this.backtoHome = this.backtoHome.bind(this);
-        //this.changeID = this.changeID.bind(this);
+        this.changeState = this.changeState.bind(this);
         this.changeRoomID = this.changeRoomID.bind(this);
         //this.eraseText = this.eraseText.bind(this);
     }
 
     async connectCall() {
         try {
+            this.setState({
+                isLoading: true,
+
+            });
             //fetching access token
             const signal = await axios.get('http://localhost:4000/api/token', { withCredentials: true });
             const store = await signal.data;
             const token = store.accessToken;
-            console.log(token);
             const room = await connect(store.accessToken, {
                 name: this.state.roomName,
                 audio: true,
@@ -49,19 +52,21 @@ class App extends Component {
 
     backtoHome() { //invoked when user clicks Leave call button
         this.setState({ room: null });
+        this.setState({
+            isLoading: false,
+        });
     }
 
-    /*eraseText() { //erase the placeholder text of name field when user enters
-        this.nameField.current.placeholder = ''; //access DOM element created by current component
-    }*/
 
-    /*changeID(event) { //update identity when user has entered name
+    changeState() { //update identity when user has entered name
         this.setState({
-            identity: event.target.value
-        });
-    }*/
+            isLoading: true,
 
-    changeRoomID(event) { //update identity when user has entered name
+        });
+        console.log("agye")
+    }
+
+    changeRoomID(event) { //update room when user has entered roomname
         this.setState({
             roomName: event.target.value
         });
@@ -84,10 +89,13 @@ class App extends Component {
                                 onChange={this.changeRoomID} //update identity
                                 //onClick={this.eraseText} //remove placeholder text
                                 placeholder="Enter Room Name" />
-                            <button className="standard-button" onClick={this.connectCall}>Join Now</button>
+                            <button className="standard-button" onClick={this.connectCall}>Join Call</button>
                             <br />
                             <button className="standard-button" onClick={e => this.props.logout(e)}>Logout</button>
+                            <br />
+                            {(this.state.isLoading === true) ? <div className="loader">Connecting</div> : <div></div>}
                         </div>
+
                         : //if room state not null
                         <Room backtoHome={this.backtoHome} room={this.state.room} />
                 }
@@ -97,10 +105,3 @@ class App extends Component {
 }
 
 export default App;
-
-/*<input
-                                value={this.state.identity} //binding the reference
-                                onChange={this.changeID} //update identity
-                                ref={this.nameField}
-                                onClick={this.eraseText} //remove placeholder text
-                                placeholder="Enter Name" />*/
