@@ -128,7 +128,10 @@ function Auth() {
             console.log(screen);
             //setScreen(res.data.isAuth);
             if (res.data.isAuth === true) {
-                setIdentity(res.name);
+                setScreen(res.data.isAuth);
+                console.log(screen);
+                setIdentity(res.data.name);
+                console.log(identity);
                 console.log(res.data);
 
             }

@@ -249,9 +249,9 @@ class Room extends Component {
                                 <Tooltip title="Microphone" arrow>
                                     <IconButton color="inherit">
                                         {
-                                            this.state.tracks.map(track =>
+                                            this.state.tracks.map((track, track_id) =>
                                                 track && track.kind == 'audio'
-                                                    ? <AudioControl key={this.props.room.localParticipant.identity}
+                                                    ? <AudioControl key={track_id}
                                                         changeAudio={this.changeAudio}
                                                         audioOff={this.state.audioOff}
                                                         track={track} />
@@ -263,9 +263,9 @@ class Room extends Component {
                                 <Tooltip title="Video" arrow>
                                     <IconButton color="inherit">
                                         {
-                                            this.state.tracks.map(track =>
+                                            this.state.tracks.map((track, track_id) =>
                                                 track && track.kind == 'video'
-                                                    ? <VideoControl key={this.props.room.localParticipant.identity}
+                                                    ? <VideoControl key={track_id}
                                                         changeVideo={this.changeVideo}
                                                         videoOff={this.state.videoOff}
                                                         track={track} />
