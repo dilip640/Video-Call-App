@@ -20,6 +20,8 @@ class Track extends Component {
 
             } else {
                 this.props.track.on('message', message => {
+                    this.props.snackBar();
+                    this.props.changeSnackbarmessage(`${this.props.id} : ${message}`);
                     this.props.pushMessage(this.props.id, message);
                     console.log(message);
                 });
@@ -34,9 +36,14 @@ class Track extends Component {
                 <div className="track" ref={this.ref}>
 
                 </div>
+
             </div>
         )
     }
 }
 
 export default Track;
+
+
+
+

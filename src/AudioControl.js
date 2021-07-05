@@ -1,6 +1,6 @@
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophone, faMicrophoneSlash, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -19,6 +19,7 @@ function AudioControl(props) {
         <div className="audiocontrol">
             <FontAwesomeIcon icon={icon} onClick={() => props.changeAudio(props.track)} />
         </div>
+
     );
 
 }

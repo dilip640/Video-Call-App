@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Snackbar from '@material-ui/core/Snackbar';
 import Attendee from './Attendee';
 import AudioControl from './AudioControl';
 import VideoControl from './VideoControl';
@@ -10,7 +11,6 @@ import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import List from '@material-ui/core/List';
 import AppBar from '@material-ui/core/AppBar';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Divider from '@material-ui/core/Divider';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -20,6 +20,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import PeopleIcon from '@material-ui/icons/People';
+import Badge from '@material-ui/core/Badge';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -45,7 +46,9 @@ class Room extends Component {
             audioOff: false,                                                  //Audio track's state of local participant
             videoOff: false,                                                  //Video track'state of local participant
             setChatOpen: false,
-            setAttendeesOpen: false
+            setAttendeesOpen: false,
+            setSnackbarOpen: false,
+            snackBarmessage: ''
         }
         this.disconnectCall = this.disconnectCall.bind(this);                 //binding this to disconnectCall()
         this.sendMessage = this.sendMessage.bind(this);
@@ -55,6 +58,8 @@ class Room extends Component {
         this.handleChatDrawer = this.handleChatDrawer.bind(this);
         this.handleAttendeesDialog = this.handleAttendeesDialog.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleSnackbar = this.handleSnackbar.bind(this);
+        this.changeSnackbarmessage = this.changeSnackbarmessage.bind(this);
     }
 
     componentDidMount() {
@@ -155,6 +160,18 @@ class Room extends Component {
         })
     }
 
+    handleSnackbar() {
+        this.setState({
+            setSnackbarOpen: true
+        })
+    }
+
+    changeSnackbarmessage(message) {
+        this.setState({
+            snackBarmessage: message
+        })
+    }
+
     render() {
 
         const styles = {
@@ -251,10 +268,12 @@ class Room extends Component {
                                         {
                                             this.state.tracks.map((track, track_id) =>
                                                 track && track.kind == 'audio'
-                                                    ? <AudioControl key={track_id}
+                                                    ?
+                                                    <AudioControl key={track_id}
                                                         changeAudio={this.changeAudio}
                                                         audioOff={this.state.audioOff}
-                                                        track={track} />
+                                                        track={track}
+                                                    />
                                                     : '')
                                         }
                                     </IconButton>
@@ -265,10 +284,12 @@ class Room extends Component {
                                         {
                                             this.state.tracks.map((track, track_id) =>
                                                 track && track.kind == 'video'
-                                                    ? <VideoControl key={track_id}
+                                                    ?
+                                                    <VideoControl key={track_id}
                                                         changeVideo={this.changeVideo}
                                                         videoOff={this.state.videoOff}
-                                                        track={track} />
+                                                        track={track}
+                                                    />
                                                     : '')
                                         }
                                     </IconButton>
@@ -284,7 +305,9 @@ class Room extends Component {
                                     <IconButton
                                         color="inherit"
                                         onClick={this.handleAttendeesDialog}>
-                                        <PeopleIcon fontSize="large" />
+                                        <Badge badgeContent={this.state.attendeesList.length} color="primary">
+                                            <PeopleIcon fontSize="large" />
+                                        </Badge>
                                     </IconButton>
                                 </Tooltip>
 
@@ -319,20 +342,26 @@ class Room extends Component {
                         <div style={styles.div}>
                             <Paper style={styles.paperLeft}>
                                 <div className="participants">
+
                                     <Attendee key={this.props.room.localParticipant.identity}
                                         dominantSpeaker={this.state.dominantSpeaker}
                                         localParticipant="true" attendee={this.props.room.localParticipant}
                                         pushMessage={this.pushMessage}
-                                        id={this.props.room.localParticipant.identity} />
+                                        id={this.props.room.localParticipant.identity}
+                                    />
+
                                     {
                                         this.state.attendeesList.map(attendee =>
                                             <Attendee key={attendee.identity}
                                                 dominantSpeaker={this.state.dominantSpeaker}
                                                 attendee={attendee}
                                                 pushMessage={this.pushMessage}
-                                                id={attendee.identity} />
+                                                id={attendee.identity}
+                                                snackBar={this.handleSnackbar}
+                                                changeSnackbarmessage={this.changeSnackbarmessage} />
                                         )
                                     }
+
                                 </div>
                             </Paper>
                         </div>
@@ -348,23 +377,23 @@ class Room extends Component {
                         aria-describedby="scroll-dialog-description"
                     >
                         <DialogTitle id="scroll-dialog-title">Others in Call</DialogTitle>
-                        <DialogContent dividers='true'>
+
+                        <DialogContent>
                             <DialogContentText
                                 id="scroll-dialog-description"
                                 tabIndex={-1}>
                                 {
                                     this.state.attendeesList.map(attendee =>
-                                        <div>
-                                            <List>
-                                                <Avatar>{attendee.identity.charAt(0)}</Avatar>
-                                                {attendee.identity}
-                                            </List>
+                                        <List>
+                                            <Avatar variant="rounded" style={{ backgroundColor: "Blue" }}>{attendee.identity.charAt(0)}</Avatar>
+                                            <Typography variant="h6">{attendee.identity}</Typography>
                                             <Divider />
-                                        </div>
+                                        </List>
                                     )
                                 }
                             </DialogContentText>
                         </DialogContent>
+
                         <DialogActions>
                             <Button onClick={this.handleClose} color="primary">
                                 Cancel
@@ -374,34 +403,52 @@ class Room extends Component {
                     </Dialog>
                 </div>
 
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    open={this.state.setSnackbarOpen}
+                    autoHideDuration={6000}
+                    message={this.state.snackBarmessage}
+                    onClose={(event, reason) => {
+                        if (reason === 'clickaway') {
+                            return;
+                        }
+                        this.setState({
+                            setSnackbarOpen: false
+                        });
+                    }}
+                />
+
                 <Drawer
                     style={styles.drawer}
                     variant="persistent"
                     anchor="right"
-                    open={this.state.setChatOpen}>
+                    open={this.state.setChatOpen}
+                >
                     <div style={styles.drawerContainer}>
                         <div style={styles.drawerHeader}>
+
                             <IconButton onClick={this.handleChatDrawer} fontSize="large">
                                 <ChevronRightIcon />
                             </IconButton>
+
                         </div>
 
                         <Divider />
 
                         <List>
                             {
-
                                 this.props.room.localParticipant
                                     ? <ChatBox sendMessage={this.sendMessage}
                                         chat={this.state.chat}
                                         local={this.props.room.localParticipant.identity} />
                                     : ''
-
                             }
                         </List>
                     </div>
                 </Drawer >
-
             </div >
         );
     }

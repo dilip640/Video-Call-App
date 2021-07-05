@@ -4,11 +4,14 @@ import Track from './Track';
 
 
 class Attendee extends Component {
+
     constructor(props) {
         super(props);
-        const existingPublications = Array.from(this.props.attendee.tracks.values());
+
+        const existingPublications = Array.from(this.props.attendee.tracks.values());             //Get all the tracks of attendees
         const existingTracks = existingPublications.map(publication => publication.track);
         const nonNullTracks = existingTracks.filter(track => track !== null)
+
         this.state = {
             tracks: nonNullTracks, //audio, video and data tracks of all the attendees
         }
@@ -27,7 +30,7 @@ class Attendee extends Component {
 
     addTrack(track) {
         this.setState({
-            tracks: [...this.state.tracks, track]
+            tracks: [...this.state.tracks, track]    //Update tracks whenever a track is published or subscribed
         });
     }
 
@@ -40,7 +43,14 @@ class Attendee extends Component {
                 {
 
                     this.state.tracks.map(track =>
-                        <Track key={track} track={track} local={this.props.localParticipant} pushMessage={this.props.pushMessage} id={this.props.id} />)
+                        <Track key={track}
+                            track={track}
+                            local={this.props.localParticipant}
+                            snackBar={this.props.snackBar}
+                            changeSnackbarmessage={this.props.changeSnackbarmessage}
+                            pushMessage={this.props.pushMessage} id={this.props.id} />
+                    )
+
                 }
             </div>
 

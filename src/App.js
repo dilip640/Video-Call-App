@@ -14,21 +14,22 @@ class App extends Component {
             room: null,
             roomName: ''
         }
-        //console.log(this.state.identity);
-        this.nameField = React.createRef(); //creating Reference to itself
-        this.connectCall = this.connectCall.bind(this);
-        this.backtoHome = this.backtoHome.bind(this);
-        this.changeState = this.changeState.bind(this);
-        this.changeRoomID = this.changeRoomID.bind(this);
-        //this.eraseText = this.eraseText.bind(this);
+
+        this.nameField = React.createRef();              //creating Reference 
+        this.connectCall = this.connectCall.bind(this);  //Invoked to connect to room
+        this.backtoHome = this.backtoHome.bind(this);    //Invoked when call is diconnected
+        this.changeState = this.changeState.bind(this);  //Change state of isLoading
+        this.changeRoomID = this.changeRoomID.bind(this);//Change Room id when user enters room name
+
     }
 
     async connectCall() {
         try {
+
             this.setState({
                 isLoading: true,
-
             });
+
             //fetching access token
             const signal = await axios.get('http://localhost:4000/api/token', { withCredentials: true });
             const store = await signal.data;
@@ -58,12 +59,11 @@ class App extends Component {
     }
 
 
-    changeState() { //update identity when user has entered name
+    changeState() { //update isLoading state
         this.setState({
             isLoading: true,
 
         });
-        console.log("agye")
     }
 
     changeRoomID(event) { //update room when user has entered roomname
@@ -73,7 +73,7 @@ class App extends Component {
     }
 
     render() {
-        //const disabled = ((this.state.identity === '') && (this.state.roomName === '')) ? true : false; //state of join button (disabled/enabled)
+        const disabled = (this.state.roomName === '') ? true : false; //state of join button (disabled/enabled)
         return (
             <div className="app">
                 {
@@ -83,13 +83,11 @@ class App extends Component {
                         <div className="home">
                             <h4 className="mt-3">Fill the details for</h4>
                             <h1 className="mt-2">Meeting Now!</h1>
-
                             <input
-                                value={this.state.roomName} //binding the reference
-                                onChange={this.changeRoomID} //update identity
-                                //onClick={this.eraseText} //remove placeholder text
+                                value={this.state.roomName}
+                                onChange={this.changeRoomID}
                                 placeholder="Enter Room Name" />
-                            <button className="standard-button" onClick={this.connectCall}>Join Call</button>
+                            <button className="standard-button" disabled={disabled} onClick={this.connectCall}>Join Call</button>
                             <br />
                             <button className="standard-button" onClick={e => this.props.logout(e)}>Logout</button>
                             <br />
@@ -97,7 +95,7 @@ class App extends Component {
                         </div>
 
                         : //if room state not null
-                        <Room backtoHome={this.backtoHome} room={this.state.room} />
+                        <Room key={this.state.room.localParticipant.identity} backtoHome={this.backtoHome} room={this.state.room} />
                 }
             </div>
         );
