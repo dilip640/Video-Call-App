@@ -95,7 +95,10 @@ class App extends Component {
                         </div>
 
                         : //if room state not null
-                        <Room key={this.state.room.localParticipant.identity} backtoHome={this.backtoHome} room={this.state.room} />
+                        <Room
+                            backtoHome={this.backtoHome} room={this.state.room}
+                            roomName={this.state.roomName}
+                        />
                 }
             </div>
         );

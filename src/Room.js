@@ -27,6 +27,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Avatar from '@material-ui/core/Avatar';
+import ChatScreen from './components/ChatScreen';
 
 class Room extends Component {
 
@@ -251,6 +252,7 @@ class Room extends Component {
         return (
 
             <div className="room">
+                <ChatScreen room={this.props.roomName} email={this.props.room.localParticipant.identity} />
                 <CssBaseline />
 
                 <Grid id="appbar" style={styles.root}>
