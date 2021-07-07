@@ -376,7 +376,9 @@ class Room extends Component {
                         aria-labelledby="scroll-dialog-title"
                         aria-describedby="scroll-dialog-description"
                     >
-                        <DialogTitle id="scroll-dialog-title">Others in Call</DialogTitle>
+                        <DialogTitle id="scroll-dialog-title">
+                            Others in Call
+                        </DialogTitle>
 
                         <DialogContent>
                             <DialogContentText
